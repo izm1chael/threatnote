@@ -13,7 +13,7 @@ def create_app():
 
     basedir = os.path.abspath(os.path.dirname(__file__))
     load_dotenv(os.path.join(basedir, '.env'))
-    app.config['SERVER_NAME'] = 'local.docker:5000'
+    app.config['SERVER_NAME'] = os.environ.get('SERVER_NAME') or 'local.docker:5000'
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or 'no_secret_key_set'
