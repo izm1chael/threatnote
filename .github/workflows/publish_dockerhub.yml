@@ -28,6 +28,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          dockerfile: threatwise/Dockerfile
+          dockerfile: threatnote/Dockerfile
           push: true
           tags: izm1chael/threatnote:v1
