@@ -27,5 +27,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
+          dockerfile: ./threatnote/Dockerfile
           push: true
           tags: izm1chael/threatnote:v1
