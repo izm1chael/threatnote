@@ -205,7 +205,7 @@ def submit_ir():
                         },
                         {
                         "title":"Due Date",
-                        "value":req.time_requirement.strftime('%m-%d-%y'),#gotta convert to string
+                        "value": req.time_requirement.strftime('%m-%d-%y') if req.time_requirement else "N/A",
                         "short":'true'
                         },
                         {
