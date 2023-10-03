@@ -6,12 +6,9 @@ Check out the docs at https://docs.threatnote.io/ to get started!
 ## Quick Start
 First you'll want to clone the threatnote.io repo
 ```
-$ git clone git@github.com:brianwarehime/threatnote.git 
+$ git clone https://github.com/izm1chael/threatnote.git
 $ cd threatnote/threatnote
-$ cp env_example env
-$ vi env (change the secret key)
 $ add 0.0.0.0 local.docker to your /etc/hosts file
-$ docker build . --tag threatnote 
 $ docker-compose up
 ```
 This will launch the following:
