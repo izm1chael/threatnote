@@ -11,7 +11,7 @@ colorama==0.4.6
 cssselect2==0.7.0
 Deprecated==1.2.14
 filelock==3.12.4
-Flask==2.3.1
+Flask==2.3.3
 Flask-DotEnv==0.1.2
 Flask-Login==0.6.2
 Flask-Migrate==4.0.5
@@ -58,7 +58,7 @@ urllib3==2.0.6
 virustotal-api==1.1.11
 weasyprint==60.1
 webencodings==0.5.1
-Werkzeug==2.3.0
+Werkzeug==2.3.7
 wheel==0.41.2
 whois==0.9.27
 wrapt==1.15.0
