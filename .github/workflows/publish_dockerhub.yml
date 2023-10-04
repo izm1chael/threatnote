@@ -28,4 +28,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: izm1chael/threatnote:v1
+          tags: izm1chael/threatnote:latest
