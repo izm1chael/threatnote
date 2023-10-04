@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block breadcrumbs %}
+										
+{% endblock %}
+{% block app_content %}
+<!-- begin:: Content -->
+
+	<!-- begin:: Content -->
+	<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+		<div class="row">
+			<div class="col-md-12">
+
+			{% for consumer in consumers %}
+			<!--begin::Portlet-->
+			<div class="kt-portlet kt-widget kt-widget--general-3">
+				<div class="kt-portlet__body kt-portlet__body--fit">
+					<div class="kt-widget__top">
+						<div class="kt-media kt-media--lg kt-media--circle">
+							<img src="static/assets/media/users/100_1.jpg" alt="image">
+						</div>
+						<div class="kt-widget__wrapper">
+							<div class="kt-widget__label" style="width: 150px; word-wrap: break-word;" >
+								<span class="kt-widget__title">
+									<span style="font-size:18px;font-weight:700;color:#000">{{ consumer.name }}</span>
+								</span>
+								<span class="kt-widget__desc">
+									{{ consumer.subtitle if consumer.subtitle else '' }}
+								</span>
+							</div>
+							<div class="kt-widget__links" style="width: 100px; word-wrap: break-word;">
+								<div class="kt-widget__cont">
+									<div class="kt-widget__link">
+										Last Updated
+									</div>
+									<div class="kt-widget__link">
+										{{ consumer.updated_at.strftime('%d %b %y')}}
+									</div>
+								</div>
+							</div>
+							<div class="kt-widget__links">
+								<div class="kt-widget__cont" style="width: 150px; word-wrap: break-word;">
+									<div class="kt-widget__link">
+										<i class="flaticon-user kt-font-brand"></i>{{ consumer.poc if consumer.poc else 'No POC Added' }}
+									</div>
+									<div class="kt-widget__link">
+										<i class="flaticon-email kt-font-brand"></i>&nbsp;{{ consumer.email if consumer.email else 'No Email Added' }}
+									</div>
+								</div>
+							</div>
+							<div class="kt-widget__stats">
+								<div class="kt-widget__stat" style="width: 170px; ">
+									<span class="kt-widget__value"><a href="{{url_for('active_reports', consumer_id=consumer.id)}}">{{ consumer.num_of_reports }}</a></span>
+									<span class="kt-widget__caption">Report{{'' if consumer.num_of_reports==1 else 's' }} <br/>
+									
+								</div>
+								<div class="kt-widget__stat " style="width: 170px; ">
+									<span class="kt-widget__value"><a href="{{url_for('active_reqs', consumer_id=consumer.id)}}">{{ consumer.num_of_reqs }}</a></span>
+									<span class="kt-widget__caption">Requirement{{'' if consumer.num_of_reqs==1 else 's' }}<br/>
+									
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="kt-widget__bottom">
+						<div class="kt-widget__summary">
+							<div class="kt-widget__item">
+								<span class="btn btn-label-brand btn-sm btn-bold btn-upper">{% if consumer.oldest_req %} {{ consumer.oldest_req.strftime('%d %b %y') }} {%endif%}</span>&nbsp;
+								<span class="kt-widget__hint">Date Added</span>
+							</div>
+						</div>
+						<div class="kt-widget__toolbar">
+							<a href="mailto:{{consumer.email}}" class="btn btn-primary rounded-sm btn-sm">Email</a>
+							<a href="/edit_consumer/{{consumer.id}}" class="btn btn-primary rounded-sm btn-sm">Edit Info</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--end::Portlet-->
+
+			{% endfor %}
+			
+			</div>
+			</div>
+		</div>
+
+		<!--End:: App Content-->
+	
+<!-- end:: Content -->
+						
+{% endblock %}
+{% block footer_scripts  %}
+<script src="static/assets/js/pages/components/forms/widgets/tagify.js" type="text/javascript"></script>{% endblock %}

@@ -1,0 +1,438 @@
+{% extends 'base.html' %}
+{% block breadcrumbs %}
+				
+
+{% endblock %}
+{% block app_content %}
+
+						<!-- begin:: Content -->
+						<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+
+<div class="row">
+								
+
+<!--begin::Portlet-->
+<div class="col-lg-4 col-xl-4 ">
+<div class="kt-portlet kt-portlet--height-fluid kt-widget-12">
+	{% if first_content %}
+	<div class="kt-portlet__body">
+		<div class="kt-widget-12__body">
+			<div class="kt-widget-12__head">
+				<div class="kt-widget-12__date {% if first_content.days < 3 %}kt-widget-12__date--danger{% elif (first_content.days >= 3) and (first_content.days < 10) %}kt-widget-12__date--warning{% else %}kt-widget-12__date--success{% endif%}">
+					<span class="kt-widget-12__day">{{first_content.title_days}}</span>
+					<span class="kt-widget-12__month">{{first_content.title_month}}</span>
+				</div>
+				<div class="kt-widget-12__label">
+					<h3 class="kt-widget-12__title" style="font-weight:700;color:#000;">{{first_content.title}}</h3>
+					<span class="kt-widget-12__desc">{{first_content.friendly_id}}</span>
+				</div>
+			</div>
+			<div class="kt-widget-12__info">
+				<span style="font-size:16px;">{{first_content.due_date}}</span>
+			</div>
+		</div>
+	</div>
+	<div class="kt-portlet__foot kt-portlet__foot--md">
+		<div class="kt-portlet__foot-wrapper">
+			<div class="kt-portlet__foot-info">
+				<div class="kt-media-group">
+					{% for consumer in first_content['consumers'] %} <a href="{{url_for('active_reqs', consumer=consumer)}}"><span class="btn btn-primary btn-sm rounded-sm"> {{ consumer }}</span></a>&nbsp;{% endfor %}
+				</div>
+			</div>
+			<div class="kt-portlet__foot-toolbar">
+				<a href="/req/{{first_content.id}}" class="btn btn-outline-primary rounded-sm btn-sm">View Req</a>
+			</div>
+		</div>
+	</div>
+	{% else %}
+	<div class="kt-portlet__body">
+		<div class="kt-widget-12__body" style="min-height: 215px;">
+			<div class="kt-widget-12__info" style="width: 100%; font-size:16px; break-word; text-align: center">
+			<br/><br/><br/><br/>
+			No other active intelligence requirements at this time.
+			</div>
+		</div>
+	</div>
+	{% endif %}
+</div>
+</div>
+<!--end::Portlet-->
+								
+<div class="col-lg-4 col-xl-4 ">
+<!--begin::Portlet-->
+<div class="kt-portlet kt-portlet--height-fluid kt-widget-12">
+	{% if second_content %}
+	<div class="kt-portlet__body">
+		<div class="kt-widget-12__body">
+			<div class="kt-widget-12__head">
+				<div class="kt-widget-12__date {% if second_content.days < 3 %}kt-widget-12__date--danger{% elif (second_content.days >= 3) and (second_content.days < 10) %}kt-widget-12__date--warning{% else %}kt-widget-12__date--success{% endif%}">
+					<span class="kt-widget-12__day">{{second_content.title_days}}</span>
+					<span class="kt-widget-12__month">{{second_content.title_month}}</span>
+				</div>
+				<div class="kt-widget-12__label">
+					<h3 class="kt-widget-12__title" style="font-weight:700;color:#000;">{{second_content.title}}</h3>
+					<span class="kt-widget-12__desc">{{second_content.friendly_id}}</span>
+				</div>
+			</div>
+			<div class="kt-widget-12__info">
+				<span style="font-size:16px;">{{second_content.due_date}}</span>
+			</div>
+		</div>
+	</div>
+	<div class="kt-portlet__foot kt-portlet__foot--md">
+		<div class="kt-portlet__foot-wrapper">
+			<div class="kt-portlet__foot-info">
+				<div class="kt-media-group">
+					{% for consumer in second_content['consumers'] %} <a href="{{url_for('active_reqs', consumer=consumer)}}"><span class="btn btn-primary btn-sm rounded-sm"> {{ consumer }}</span></a>&nbsp;{% endfor %}
+				</div>
+			</div>
+			<div class="kt-portlet__foot-toolbar">
+				<a href="/req/{{second_content.id}}" class="btn btn-outline-primary rounded-sm btn-sm">View Req</a>
+			</div>
+		</div>
+	</div>
+	{% else %}
+	<div class="kt-portlet__body">
+		<div class="kt-widget-12__body" style="min-height: 215px;">
+			<div class="kt-widget-12__info" style="width: 100%; font-size:16px; break-word; text-align: center">
+			<br/><br/><br/><br/>
+			No other active intelligence requirements at this time.
+			</div>
+		</div>
+	</div>
+	
+	{% endif %}
+
+</div>
+</div>
+
+<!--end::Portlet-->
+
+
+
+<div class="col-lg-4 col-xl-4 ">
+	<!--begin::Portlet-->
+<div class="kt-portlet kt-portlet--height-fluid kt-widget-12">
+	{% if third_content %}
+	<div class="kt-portlet__body">
+		<div class="kt-widget-12__body">
+			<div class="kt-widget-12__head">
+				<div class="kt-widget-12__date {% if third_content.days < 3 %}kt-widget-12__date--danger{% elif (third_content.days >= 3) and (third_content.days < 10) %}kt-widget-12__date--warning{% else %}kt-widget-12__date--success{% endif%}">
+					<span class="kt-widget-12__day">{{third_content.title_days}}</span>
+					<span class="kt-widget-12__month">{{third_content.title_month}}</span>
+				</div>
+				<div class="kt-widget-12__label">
+					<h3 class="kt-widget-12__title" style="font-weight:700;color:#000;">{{third_content.title}}</h3>
+					<span class="kt-widget-12__desc">{{third_content.friendly_id}}</span>
+				</div>
+			</div>
+			<div class="kt-widget-12__info">
+				<span style="font-size:16px;">{{third_content.due_date}}</span>
+			</div>
+		</div>
+	</div>
+	<div class="kt-portlet__foot kt-portlet__foot--md">
+		<div class="kt-portlet__foot-wrapper">
+			<div class="kt-portlet__foot-info">
+				<div class="kt-media-group">
+					{% for consumer in third_content['consumers'] %} <a href="{{url_for('active_reqs', consumer=consumer)}}"><span class="btn btn-primary btn-sm rounded-sm"> {{ consumer }}</span></a>&nbsp;{% endfor %}
+
+				</div>
+			</div>
+			<div class="kt-portlet__foot-toolbar">
+				<a href="/req/{{third_content.id}}" class="btn btn-outline-primary rounded-sm btn-sm">View Req</a>
+			</div>
+		</div>
+	</div>
+	{% else %}
+	<div class="kt-portlet__body"  style="min-height: 265px;">
+		<div class="kt-widget-12__body" style="min-height: 215px;">
+			<div class="kt-widget-12__info" style="width: 100%; font-size:16px; break-word; text-align: center">
+			<br/><br/><br/><br/>
+			No other active intelligence requirements at this time.
+			</div>
+		</div>
+	</div>
+	
+	{% endif %}
+</div>
+<!--end::Portlet-->
+</div>
+</div>
+	
+							<!--begin: Row-->
+							<div class="row">
+								<div class="col-xl-4 col-lg-6">
+									<div class="kt-portlet kt-portlet--height-fluid">
+										<div class="kt-portlet__body">
+											<div class="kt-widget kt-widget--general-1">
+													<span style="font-size:60px;Font-family:DM Sans;font-weight:300;" class="statistic">{{intel_reqs}}</span>&nbsp;
+												<div class="kt-widget__wrapper">
+													<div class="kt-widget__label">
+															<span style="Font-family:DM Sans;font-weight:300;font-size:15px;">Number of</span>
+															<span style="font-family:DM Sans;font-weight:700;font-size:20px;">Intel Requirements</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-xl-4 col-lg-6">
+									<div class="kt-portlet kt-portlet--height-fluid">
+										<div class="kt-portlet__body">
+											<div class="kt-widget kt-widget--general-1">
+													<span style="font-size:60px;Font-family:DM Sans;font-weight:300;" class="statistic">{{indicators}}</span> &nbsp;
+												<div class="kt-widget__wrapper">
+													<div class="kt-widget__label">
+														<span style="Font-family:DM Sans;font-weight:300;font-size:15px;">Number of</span>
+															<span style="font-family:DM Sans;font-weight:700;font-size:20px;">Indicators</span>
+													</div>
+													
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-xl-4 col-lg-6">
+									<div class="kt-portlet kt-portlet--height-fluid">
+										<div class="kt-portlet__body">
+											<div class="kt-widget kt-widget--general-1">
+													<span style="font-size:60px;Font-family:DM Sans;font-weight:300;" class="statistic">{{reports}}</span>&nbsp;&nbsp;
+												<div class="kt-widget__wrapper">
+													<div class="kt-widget__label">
+														<span style="Font-family:DM Sans;font-weight:300;font-size:15px;">Number of</span>
+															<span style="font-family:DM Sans;font-weight:700;font-size:20px;">Reports</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+						
+								
+						</div>
+					
+					
+</div>
+
+							<div class="row">
+							<div class="col-xl-4">	
+<!--begin::Portlet-->
+<div class="kt-portlet kt-portlet--height-fluid">
+	<div class="kt-portlet__head">
+		<div class="kt-portlet__head-label">
+			<h3 class="kt-portlet__head-title">Indicator Types</h3>
+		</div>
+		
+	</div>
+	<div class="kt-portlet__body">
+		<div class="kt-widget-1">
+			
+			<div class="tab-content">
+				<div class="tab-pane fade active show" id="kt_tabs_19_15e310a22190c5" role="tabpanel">
+					<div class="kt-widget-1__item">
+						<div class="kt-widget-1__item-info">
+							<a href="#" class="kt-widget-1__item-title">
+								IP Addresses
+							</a>
+							
+						</div>
+						<div class="kt-widget-1__item-stats">
+							<div class="kt-widget-1__item-value">{{ips}}%</div>
+							<div class="kt-widget-1__item-progress">
+								<div class="progress">
+									<div class="progress-bar bg-danger" role="progressbar" style="width: {{ips}}%;" aria-valuenow="{{ips}}" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="kt-widget-1__item">
+						<div class="kt-widget-1__item-info">
+							<a href="#" class="kt-widget-1__item-title">
+								Domains
+							</a>
+							
+						</div>
+						<div class="kt-widget-1__item-stats">
+							<div class="kt-widget-1__item-value">{{domains}}%</div>
+							<div class="kt-widget-1__item-progress">
+								<div class="progress">
+									<div class="progress-bar bg-brand" role="progressbar" style="width: {{domains}}%;" aria-valuenow="{{domains}}" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="kt-widget-1__item">
+						<div class="kt-widget-1__item-info">
+							<a href="#" class="kt-widget-1__item-title">URLs</a>
+						
+						</div>
+						<div class="kt-widget-1__item-stats">
+							<div class="kt-widget-1__item-value">{{urls}}%</div>
+							<div class="kt-widget-1__item-progress">
+								<div class="progress">
+									<div class="progress-bar  bg-success" role="progressbar" style="width: {{urls}}%;" aria-valuenow="{{urls}}" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="kt-widget-1__item">
+						<div class="kt-widget-1__item-info">
+							<a href="#" class="kt-widget-1__item-title">Email Address</a>
+						</div>
+						<div class="kt-widget-1__item-stats">
+							<div class="kt-widget-1__item-value">{{emails}}%</div>
+							<div class="kt-widget-1__item-progress">
+								<div class="progress">
+									<div class="progress-bar bg-focus" role="progressbar" style="width: {{emails}}%;" aria-valuenow="{{emails}}" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="kt-widget-1__item">
+						<div class="kt-widget-1__item-info">
+							<a href="#" class="kt-widget-1__item-title">SHA256 Hash</a>
+							
+						</div>
+						<div class="kt-widget-1__item-stats">
+							<div class="kt-widget-1__item-value">{{sha256}}%</div>
+							<div class="kt-widget-1__item-progress">
+								<div class="progress">
+									<div class="progress-bar bg-warning" role="progressbar" style="width: {{sha256}}%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="kt-widget-1__item">
+						<div class="kt-widget-1__item-info">
+							<a href="#" class="kt-widget-1__item-title">MD5 Hash</a>
+						</div>
+						<div class="kt-widget-1__item-stats">
+							<div class="kt-widget-1__item-value">{{md5}}%</div>
+							<div class="kt-widget-1__item-progress">
+								<div class="progress">
+									<div class="progress-bar bg-brand" role="progressbar" style="width: {{md5}}%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="kt-widget-1__item">
+						<div class="kt-widget-1__item-info">
+							<a href="#" class="kt-widget-1__item-title">CVE</a>
+						</div>
+						<div class="kt-widget-1__item-stats">
+							<div class="kt-widget-1__item-value">{{cve}}%</div>
+							<div class="kt-widget-1__item-progress">
+								<div class="progress">
+									<div class="progress-bar bg-danger" role="progressbar" style="width: {{cve}}%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="kt-widget-1__item">
+						<div class="kt-widget-1__item-info">
+							<a href="#" class="kt-widget-1__item-title">ATT&amp;CK Techniques</a>
+						</div>
+						<div class="kt-widget-1__item-stats">
+							<div class="kt-widget-1__item-value">{{attack}}%</div>
+							<div class="kt-widget-1__item-progress">
+								<div class="progress">
+									<div class="progress-bar bg-success" role="progressbar" style="width: {{attack}}%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!--end::Portlet-->
+</div>
+
+<div class="col-xl-8">
+					<!--begin::Portlet-->
+				
+					<div class="kt-portlet kt-portlet--height-fluid">
+						<div class="kt-portlet__head">
+							<div class="kt-portlet__head-label">
+								<h3 class="kt-portlet__head-title">Customers Supported</h3>
+							</div>
+							
+						</div>
+						
+						<div class="kt-portlet__body kt-portlet__body--fluid">
+							<div class="kt-widget-9">
+								<div class="kt-widget-9__panel">
+									<div class="kt-widget-9__legends">
+										<div class="kt-widget-9__legend">
+											<div class="kt-widget-9__legend-bullet kt-bg-brand"></div>
+											<div class="kt-widget-9__legend-label">Reports</div>
+										</div>
+										<div class="kt-widget-9__legend">
+											<div class="kt-widget-9__legend-bullet kt-label-bg-color-1"></div>
+											<div class="kt-widget-9__legend-label">Intel Requirements</div>
+										</div>
+									</div>
+									<div class="kt-widget-9__toolbar">
+										<div class="dropdown dropdown-inline">
+											
+											
+										</div>
+									</div>
+								</div>
+								<div class="kt-widget-9__chart">
+
+									<!--Doc: For the chart initialization refer to "widgetSalesStatisticsChart" function in "src\theme\app\scripts\custom\dashboard.js" -->
+									<canvas id="kt_chart_sales_statistics" height="300"></canvas>
+									<!--Doc: For the chart initialization refer to "widgetSalesStatisticsChartNew" function in "src\theme\app\scripts\custom\dashboard.js" -->
+									<div id="report_intel_data" style="display: none;visibility: hidden;" >
+									{% for dt in customer_list %} 
+										<div id="report_intel_data_label_{{ dt.customer}}">{{ dt.customer}}</div>
+										<div id="report_intel_data_report_{{dt.reports}}">{{dt.reports}}</div>
+										<div id="report_intel_data_intel_{{dt.intelreqs}}">{{dt.intelreqs}}</div>
+									{% endfor %}
+									</div>
+									
+								</div>
+							</div>
+						</div>
+						</div>
+					</div>
+					</div>
+				</div>
+				
+{% endblock %}
+{% block footer_scripts %}
+		<!--begin::Page Vendors(used by this page) -->
+		<script src="static/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js" type="text/javascript"></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/countup.js/1.8.5/countUp.min.js'></script>
+		<!--end::Page Vendors -->
+		<script>// These are the options that I'm going to be using on each statistic
+			var options = {
+				useGrouping: true,
+				decimal: "."
+			};
+			
+			// Find all Statistics on page, put them inside a variable
+			var statistics = $(".statistic");
+			
+			// For each Statistic we find, animate it
+			statistics.each(function(index) {
+				// Find the value we want to animate (what lives inside the p tags)
+				var value = $(statistics[index]).html();
+				// Start animating
+				var statisticAnimation = new CountUp(statistics[index], 0, value, 0, 5, options);
+				statisticAnimation.start();
+			});</script>
+
+		<!--begin::Page Scripts(used by this page) -->
+		<script src="static/assets/js/pages/dashboard.js" type="text/javascript"></script>
+
+		<!--end::Page Scripts -->
+		
+{% endblock %}

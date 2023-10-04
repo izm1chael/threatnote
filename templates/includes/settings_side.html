@@ -1,0 +1,77 @@
+<!-- Begin:: App Aside Mobile Toggle -->
+    <button class="kt-app__aside-close" id="kt_profile_aside_close">
+    <i class="la la-close"></i>
+    </button>
+
+<!--End:: App Aside Mobile Toggle-->
+
+<div class="kt-grid__item kt-app__toggle kt-app__aside kt-app__aside--sm kt-app__aside--fit" id="kt_profile_aside">
+
+    <!--Begin:: Portlet-->
+    <div class="kt-portlet">
+        <div class="kt-portlet__body">
+            <div class="kt-widget kt-widget--general-1">
+                <div class="kt-media kt-media--brand kt-media--md kt-media--circle">
+                    <img src="{{avatar if avatar else 'static/assets/media/users/default.jpg'}}" alt="image">
+                </div>
+                <div class="kt-widget__wrapper">
+                    <div class="kt-widget__label">
+                        <a href="#" class="kt-widget__title">
+                            {{current_user.name}}
+                        </a>
+                        <span class="kt-widget__desc">
+                            {{current_user.role}}
+                        </span>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="kt-portlet__separator"></div>
+        <div class="kt-portlet__body">
+            <ul class="kt-nav kt-nav--bolder kt-nav--fit-ver kt-nav--v4" role="tablist">
+                <li class="kt-nav__item  {{ 'active' if section=='settings' else ''}} ">
+                    <a class="kt-nav__link" href="{{ url_for('user_settings')}}" role="tab">
+                        <span class="kt-nav__link-icon"><i class="flaticon2-settings"></i></span>
+                        <span style="Font-family:rubik;font-weight:300;color:#000">User Settings</span>
+                    </a>
+                </li>
+                {% if current_user.role=='admin' %}
+                <li class="kt-nav__item {{ 'active' if section=='integrations' else ''}} ">
+                    <a class="kt-nav__link" href="{{ url_for('integrations')}}" role="tab">
+                        <span class="kt-nav__link-icon "><i class="flaticon-feed"></i></span>
+                        <span style="Font-family:rubik;font-weight:300;color:#000">Integrations</span>
+                    </a>
+                </li>
+                {% endif %}
+                <li class="kt-nav__item {{ 'active' if section=='change_password' else ''}} ">
+                    <a class="kt-nav__link" href="{{ url_for('change_password')}}" role="tab">
+                        <span class="kt-nav__link-icon "><i class="flaticon2-settings"></i></span>
+                        <span style="Font-family:rubik;font-weight:300;color:#000">Change Password</span>
+                    </a>
+                </li>
+                <li class="kt-nav__item {{ 'active' if section=='webhooks' else ''}} ">
+                    <a class="kt-nav__link" href="{{ url_for('webhooks')}}" role="tab">
+                        <span class="kt-nav__link-icon "><i class="flaticon2-rocket-1"></i></span>
+                        <span style="Font-family:rubik;font-weight:300;color:#000">Webhooks</span>
+                    </a>
+                </li>
+
+				{% if current_user.role=='admin' %}
+                <li class="kt-nav__item {{ 'active' if section=='users' else ''}} ">
+                    <a class="kt-nav__link" href="{{ url_for('users_list')}}" role="tab">
+                        <span class="kt-nav__link-icon "><i class="flaticon2-user"></i></span>
+                        <span style="Font-family:rubik;font-weight:300;color:#000">Users</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        </div>
+
+    <!--End:: Portlet-->
+
+    
+    <!--End:: Portlet-->
+</div>
+

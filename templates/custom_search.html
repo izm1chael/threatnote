@@ -1,0 +1,49 @@
+<div class="kt-quick-search__result">
+    {% if reports_result|length == 0 %}
+        <div class="kt-quick-search__message kt-hidden">
+            No record found
+        </div>
+    {% else %}
+        <div class="kt-quick-search__category">
+            Reports
+        </div>
+        <div class="kt-quick-search__section">
+        {% for item in reports_result %}
+            <div class="kt-quick-search__item">
+                <div class="kt-quick-search__item-wrapper">
+                    <a href="/report/{{item.id}}" class="kt-quick-search__item-title">
+                        <i class="flaticon2-medical-records kt-font-brand"></i>&nbsp;{{item.friendly_id}} - {{item.title}}
+                    </a>
+                    <!-- <div class="kt-quick-search__item-desc"> -->
+                        <!-- {{item.content}} -->
+                    <!-- </div> -->
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if requirements_result|length == 0 %}
+        <div class="kt-quick-search__message kt-hidden">
+            No record found
+        </div>
+    {% else %}
+        <div class="kt-quick-search__category">
+            Requirements
+        </div>
+        <div class="kt-quick-search__section">
+        {% for item in requirements_result %}
+            <div class="kt-quick-search__item">
+                <div class="kt-quick-search__item-wrapper">
+                    <a href="/req/{{item.id}}" class="kt-quick-search__item-title">
+                        <i class="flaticon2-layers-1 kt-font-warning"></i>&nbsp;{{item.friendly_id}} - {{item.title}}
+                    </a>
+                    <!-- <div class="kt-quick-search__item-desc"> -->
+                        <!-- {{item.content}} -->
+                    <!-- </div> -->
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+</div>

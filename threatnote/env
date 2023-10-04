@@ -1,3 +1,0 @@
-SECRET_KEY=change_this_key
-SQLALCHEMY_DATABASE_URI=sqlite:////db/threatnote.db
-
