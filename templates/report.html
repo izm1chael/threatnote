@@ -1,0 +1,936 @@
+{% extends 'base.html' %}
+{% block head %}
+{{ super()}}
+<style>
+.hiddendiv {
+display: none;
+visibility: hidden;
+}
+.disabledlink {
+display: none;
+visibility: hidden;
+}
+</style>
+{% endblock %}
+{% block breadcrumbs %}
+
+{% endblock %}
+{% block app_content %}
+						<!-- begin:: Content -->
+						<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+							<div class="row">
+
+								<div class="col-lg-8 col-xl-9">
+									<!--begin::Portlet-->
+									<div class="kt-portlet kt-portlet--mobile">
+										<div class="kt-portlet__head kt-portlet__head--lg">
+											<div class="kt-portlet__head-label">
+												<h3 class="kt-portlet__head-title">
+													<span class="kt-list__icon"><i class="flaticon2-medical-records kt-font-brand"></i></span>  {{report_info['friendly_id']}} &nbsp; <a href="/edit_report/{{report_info.id}}"><i class="flaticon2-edit kt-font-primary" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="right" data-content="Edit Report"></i></a> 
+												</h3>
+											</div>
+											<div class="kt-portlet__head-toolbar">
+												<div class="kt-portlet__head-group pr-2">
+													{% if report_info.tlp == "WHITE" %}
+													<button type="button" class="btn btn-metal btn-sm btn-bold btn-upper rounded-sm">TLP: WHITE</button>
+													{% elif report_info.tlp == "RED" %}
+													<button type="button" class="btn btn-danger btn-sm btn-bold btn-upper rounded-sm">TLP: RED</button>
+													{% elif report_info.tlp == "GREEN" %}
+													<button type="button" class="btn btn-success btn-sm btn-bold btn-upper rounded-sm">TLP: GREEN</button>
+													{% elif report_info.tlp == "AMBER" %}
+													<button type="button" class="btn btn-warning btn-sm btn-bold btn-upper rounded-sm">TLP: AMBER</button>
+													{% endif %}
+												</div>
+
+												<!-- Export Button -->
+												<div class="kt-export">
+													<div class="dropdown">
+													  <button class="btn btn-gray-300 btn-sm btn-bold btn-upper rounded-sm export" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													    <span class="fe fe-download"></span>
+													  </button>
+													  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+													    <a class="dropdown-item" href="javascript: void(0)" id="misp_export">Export to MISP</a>
+													    <a class="dropdown-item" href="{{url_for('view_report', report_id=report_info.id, pdf=True)}}">Export as PDF</a>
+													  </div>
+													</div>
+												</div>
+												<!--  MISP TOAST  -->
+												<div class="toast toast-custom toast-fill fade hide" role="alert" aria-live="assertive" aria-atomic="true" id="misp_toast">
+													<div class="toast-header">
+														<i class="toast-icon flaticon2-email kt-font-brand"></i>
+														<span class="toast-title"><span style="font-size:14px;font-weight:700;">Hello!</span></span>
+														<small class="toast-time">Just now</small>
+														<button type="button" class="toast-close" data-dismiss="toast" aria-label="Close">
+															<i class="la la-close"></i>
+														</button>
+													</div>
+													<div class="toast-body">
+														<span style="font-size:16px;">Creating event in MISP. Please wait...</span>
+													</div>
+												</div>		
+
+											</div>
+
+										</div>
+										<div class="kt-portlet__body">
+											
+												<div><span style="font-size:16px; word-wrap: break-word;">{{new_content | safe }}</span></div>
+													<div class="kt-separator kt-separator--space-lg kt-separator--border-dashed"></div>
+												<div class="text-left">
+												{% for tag in tags %} <a href="{{url_for('active_reports', tag=tag['tag'])}}"><span class="btn btn-primary rounded-sm btn-sm"> {{ tag['tag']}} </span></a>{% endfor %}
+											</div>
+												
+													
+													
+										</div>
+									</div>
+
+										<!--begin::Portlet-->
+									<div class="kt-portlet kt-portlet--mobile">
+										<div class="kt-portlet__head kt-portlet__head--lg">
+											<div class="kt-portlet__head-label">
+												<h3 class="kt-portlet__head-title">
+													 Comments &nbsp;
+												</h3>
+											</div>
+											<div class="kt-portlet__head-toolbar">
+												
+											</div>
+
+
+
+										</div>
+										<div class="kt-portlet__body">
+											
+											<div class="kt-list">
+												{% for comment in comments %}
+												<div class="row kt-list__item">
+													<div class="col-lg-10">
+														<span class="kt-list__text kt-label-font-color-1"><span class="kt-label-font-color-3"><b><span style="font-size:16px;">{{comment.user}}</span></b></span> 
+														<br/>
+														<span style="font-size:16px;">{{comment.comment}}</span></span>
+													</div>
+													<div class="col-lg-2 kt-list__time"><span style="font-size:16px;">{{ comment.updated_at | time_ago}}</span>
+													</div>
+												</div>
+													{% endfor%}
+												<div class="row kt-list__item">														
+													<div class="col-lg-12"  style="padding-top: 20px; display: grid; grid-template-columns: 1fr 100px; ">
+														<div>
+															<input type="text" class="form-control" placeholder="Type here..." name="new_comment" id="new_comment"  value="" style="width: 97%">
+														</div>
+														<div style="position: absolute; right:0px; top: 20px;">
+															<input type="button" id="make_comment" value="Add Comment" class="btn btn-primary rounded-sm btn-sm" >
+														</div>
+													</div>
+												</div>				
+											</div>
+									</div>
+									</div>
+									
+									<!--end::Portlet-->
+								</div>
+
+								<div class="col-lg-4 col-xl-3" >
+									<div class="">
+										<div class="kt-scroll" data-scroll="true" data-scroll-x="true" style="min-height: 1000px; height: auto;">
+		
+	
+									<!--begin::Portlet-->
+									<div class="kt-portlet kt-portlet--tabs">
+										<div class="kt-portlet__head">
+											<div class="kt-portlet__head-toolbar" style="width:100%; display: grid; column-gap: 20px;grid-template-columns: 1fr 3fr; ">
+												<div class="kt-portlet__head-label" align="left">
+													<h3 class="kt-portlet__head-title"><span id="for_indicator">Details</span></h3>
+													<div id="current_indicator" class="hiddendiv"/></div>
+													<div id="enhancer_type" class="hiddendiv"></div>
+												</div>
+												<div >
+												<ul class="nav nav-tabs nav-tabs-line nav-tabs-line-right " role="tablist">
+													<li class="nav-item">
+														<a class="nav-link active" data-toggle="tab" id="show_info"role="tab">
+															<span style="font-size:14px;">Info</span>
+														</a>
+													</li>
+													
+												  <li class="nav-item dropdown">
+												    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><span style="font-size:14px;">Sources</span></a>
+								                        <div class="dropdown-menu" id="source_menu">
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  href="javascript:show_section2('emailrep');">EmailRep</a>
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_hibp">HIBP</a>
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_virustotal">VirusTotal</a>
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_riskiq">RiskIQ</a>
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_shodan">Shodan</a>
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_alienvault">AlienVault</a>	
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_urlscan">urlscan.io</a>			
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_greynoise">greynoise.io</a>
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_misp">MISP</a>
+															<a class="dropdown-item hiddendiv" data-toggle="tab"  id="show_hunter">Hunter.io</a>	
+												    	</div>
+												  </li>
+
+												</ul>
+												</div>
+												
+											</div>
+										</div>
+
+											<div class="kt-portlet__body">
+											
+								                <div class="tab-content">
+												<div class="kt-section" id="ipinfo">
+																				<div class="kt-section__desc">
+								                          <div id="kt_table_indicators_info"><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>  <!-- Logo -->
+															
+															  <div id="indicatorsLogo" align="center" style="margin: auto; width: fit-content; top: 50%; -ms-transform: translateY(-50%); transform: translateY(-50%);">
+																  <img src="static/assets/media/logos/small_logo.png" style="width: 25%;height: 25%;object-fit: contain;"></img><p></p>
+																  
+																	<span style="font-family:DM Sans;font-weight:500;font-size:16px;">Click on an indicator to view more info!</span>
+																 
+																</div>
+															
+															  <!-- End: Logo --><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/></div>
+																				</div>
+																			
+								
+												</div>
+												{% for indicator in indicators %}
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_json" class="hiddendiv">
+													<code>{{ indicator }}</code>
+												</div>
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_riskiq" class="hiddendiv">
+													<!--  Just an example -->
+															<div class="kt-section__desc"  align="left">
+															{% if user_info.riskiq_enabled %}
+																{% if ('Domain' in indicator.indicator_type) or ('IP' in indicator.indicator_type) %}
+																		{% for key, value in indicator.items() %}	
+																		{% if 'risk' in key or key=='gn_tags' %}
+																		<div class="kt-section__desc" style="word-wrap: break-word;" align="left">
+																		<span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span>
+																		<br/>
+																		<span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">
+																		{% if value %}
+																			{% set lst=value.split(',') %}
+																			{% for val in lst %}
+																			{% if  key in ('gn_tags', 'risk_tags', 'risk_sources') %}
+																				<span>{{ val | urlize(40, target='_blank')}}</span><br/>
+																			{% else %}
+																				<span>{{ val }}</span><br/>
+
+																			{% endif %}
+																			
+																			{% endfor %}
+																		{% else %}
+																			None<br/>
+																		{% endif%}
+																		</span>
+																		</div>
+																		</span>
+																		{% endif %}
+																		{% endfor %}
+																 {% else %} 
+																	 RiskIQ does not currently support this type of indicator
+																 {% endif %}
+															{% else %}
+																Please add your API key and enable RiskIQ in the Integrations page.
+															{% endif %}
+															</div>
+													</div>
+
+													<div id="indicator_{{indicator.indicator | escape_jquery }}_greynoise" class="hiddendiv">
+														<!--  Just an example -->
+																<div class="kt-section__desc"  align="left">
+																{% if user_info.gn_enabled %}
+																	{% if 'IP' in indicator.indicator_type %}
+																			{% for key, value in indicator.items() %}	
+																			{% if 'gn_' in key %}
+																			<div class="kt-section__desc"  align="left" style="word-wrap: break-word;"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">
+																			{% if value %}
+																				{% set lst=value.split(',') %}
+																				{% for val in lst %}
+																					<span>{{ val }}</span><br/>	
+																				
+																				{% endfor%}
+																				
+																			{% else %}
+																			<span>None</span><br/>
+																			{% endif %}
+																			</span></div>
+																			{% endif %}
+																			{% endfor %}
+																	 {% else %} 
+																		 greynoise.io only support IP Addresses at this time
+																	 {% endif %}
+																{% else %}
+																	Please add your API key and enable greynoise.io in the Integrations page.
+																{% endif %}
+																</div>
+													</div>
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_shodan" class="hiddendiv">
+													<div class="kt-section__desc"  align="left">
+														{% if user_info.shodan_enabled %}
+															{% if 'IP' in indicator.indicator_type %}
+																	{% for key, value in indicator.items() %}	
+																	{% if 'shodan_' in key %}
+																		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+																	{% endif %}
+																	{% endfor %}
+															{% else %} 
+																 Shodan does not contain data for this type of indicator  	
+															 {% endif %}
+														{% else %}
+															Your account is not AlienVault enabled. Enter and EmailRep API key in settings to view this information.						
+														{% endif %}
+														</div>
+												</div>
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_hibp" class="hiddendiv">
+													<div class="kt-section__desc"  align="left">
+														{% if user_info.hibp_enabled %}
+															{% if 'Email' in indicator.indicator_type %}
+																	{% for key, value in indicator.items() %}	
+																	{% if 'hibp_' in key %}
+																	
+																		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;word-wrap:break-word;">
+																			{% if value and key=='hibp_breaches'%}		
+																					{% set lst=value.split(',') %}
+																					{% for val in lst %}
+																						{{ val }}<br/>	
+																					{% endfor%}
+																					
+																			{% else %}
+																				{{ value }}
+	
+																			{% endif %}
+
+																		</span></div>
+																	{% endif %}
+																	{% endfor %}
+															{% else %} 
+																 HIBP does not contain data for this type of indicator 	
+															 {% endif %}
+														{% else %}
+															Your account is not HIBP enabled. Enter your HIBP API Key in settings to view this information.						
+														{% endif %}
+														</div>
+												</div>
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_misp" class="hiddendiv">
+													<div class="kt-section__desc"  align="left">
+														{% if user_info.misp_enabled %}
+															{% if ('IP' in indicator.indicator_type) or ('Domain' in indicator.indicator_type) or ('MD5 Hash' in indicator.indicator_type) or ('SHA256 Hash' in indicator.indicator_type) or ('URL' in indicator.indicator_type) or ('CVE' in indicator.indicator_type) or ('Email' in indicator.indicator_type) %}
+																	{% for key, value in indicator.items() %}	
+																	{% if 'misp_' in key %}
+																	
+																		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;word-wrap:break-word;">{{ value }}</span></div>
+																	{% endif %}
+																	{% endfor %}
+															{% else %} 
+																 MISP does not contain data for this type of indicator 	
+															 {% endif %}
+														{% else %}
+															Your account is not MISP enabled. Enter your MISP Auth Key in settings to view this information.						
+														{% endif %}
+														</div>
+												</div>
+
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_hunter" class="hiddendiv">
+													<div class="kt-section__desc"  align="left">
+														{% if user_info.hunter_enabled %}
+															{% if 'Email' in indicator.indicator_type %}
+																	{% for key, value in indicator.items() %}	
+																	{% if 'hunter_' in key %}
+																	
+																		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;word-wrap:break-word;">{{ value }}</span></div>
+																	{% endif %}
+																	{% endfor %}
+															{% else %} 
+																 Hunter.io does not contain data for this type of indicator 	
+															 {% endif %}
+														{% else %}
+															Your account is not Hunter.io enabled. Enter your Hunter.io Auth Key in settings to view this information.						
+														{% endif %}
+														</div>
+												</div>
+
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_alienvault" class="hiddendiv">
+													<div class="kt-section__desc"  align="left">
+														{% if user_info.av_enabled %}
+															{% if ('IP' in indicator.indicator_type) or ('Domain' in indicator.indicator_type) or ('MD5 Hash' in indicator.indicator_type) or ('SHA256 Hash' in indicator.indicator_type) %}
+																	{% for key, value in indicator.items() %}	
+																	{% if 'av_' in key %}
+																		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+																	{% endif %}
+																	{% endfor %}
+															{% else %} 
+																 AlienVault does not contain data for this type of indicator 	
+															 {% endif %}
+														{% else %}
+															Your account is not AlienVault enabled. Enter and EmailRep API key in settings to view this information.						
+														{% endif %}
+														</div>
+												</div>
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_emailrep" class="hiddendiv">
+												<!--  Just an example -->
+														<div class="kt-section__desc"  align="left">
+														{% if user_info.emailrep_enabled %}
+															{% if 'Email' in indicator.indicator_type %}
+																	{% for key, value in indicator.items() %}	
+												                	{% if 'email' in key %}
+												                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+												                	{% endif %}
+												                	{% endfor %}
+												             {% else %} 
+												             	The EmailRep enhancer only pertains to Email Address indicators.  	
+												             {% endif %}
+														{% else %}
+															Your account is not EmailRep enabled. Enter and EmailRep API key in settings to view this information.						
+														{% endif %}
+														</div>
+												</div>
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_vt" class="hiddendiv">
+													<!--  Just an example -->
+															<div class="kt-section__desc"  align="left">
+															{% if user_info.vt_enabled %}
+																{% if 'Hash' in indicator.indicator_type %}
+																		{% for key, value in indicator.items() %}	
+																		{% if 'vt' in key %}
+																			<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+																		{% endif %}
+																		{% endfor %}
+																 {% else %} 
+																	 VirusTotal does not contain information on this type of indicator.  	
+																 {% endif %}
+															{% else %}
+																Your account is not VT enabled. Enter and EmailRep API key in settings to view this information.						
+															{% endif %}
+															</div>
+												</div>
+
+													<div id="indicator_{{indicator.indicator | escape_jquery }}_urlscan" class="hiddendiv">
+														<!--  Just an example -->
+																<div class="kt-section__desc"  align="left">
+																{% if user_info.urlscan_enabled %}
+																	{% if ('URL' in indicator.indicator_type) or ('Domain' in indicator.indicator_type) %}
+																			{% for key, value in indicator.items() %}	
+																			{% if 'urlscan' in key %}
+																				<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+																			{% endif %}
+																			{% endfor %}
+																	 {% else %} 
+																		 urlscan.io does not contain information on this type of indicator.
+																	 {% endif %}
+																{% else %}
+																	Your account is not urlscan.io enabled. Enter and EmailRep API key in settings to view this information.						
+																{% endif %}
+																</div>
+														</div>
+								
+												<div id="indicator_{{indicator.indicator | escape_jquery }}_info" class="hiddendiv">
+													
+																											<!--begin:: Toast markup-->
+														<div class="toast toast-custom toast-fill fade hide" role="alert" aria-live="assertive" aria-atomic="true" id="refresh_indicator_toast_{{indicator.id}}">
+															<div class="toast-header">
+																<i class="toast-icon flaticon2-email kt-font-brand"></i>
+																<span class="toast-title"><span style="font-size:14px;font-weight:700;">Hello!</span></span>
+																<small class="toast-time">Just now</small>
+																<button type="button" class="toast-close" data-dismiss="toast" aria-label="Close">
+																	<i class="la la-close"></i>
+																</button>
+															</div>
+															<div class="toast-body">
+																
+																<span style="font-size:16px;">Enriching {{indicator.indicator}}. Please wait...</span>
+																
+															</div>
+														</div>
+														<!--end:: Toast markup-->
+													
+												<br/>
+													
+												<div id="" style="margin-left: 10px;">
+													<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">Indicator</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ indicator.indicator }}</span>&nbsp;<i class="flaticon2-refresh kt-font-brand" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="top" data-content="Refresh Indicator details" id="refresh_indicator_{{indicator.id}}"></i></div>
+													</div>
+														
+
+								                	<div id="" style="margin-left: 10px;">
+									                {% for key, value in indicator.items() %}	
+									                	
+									                	{% if key =='kill_chain' %}
+									                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/>
+									                		<select class="form-control" id="kill_chain_{{indicator['id']}}" name="kill_chain">
+																<option {{ 'selected' if value=='Unknown' else ''}} value="Unknown">Unknown</option>
+																<option {{ 'selected' if value=='Actions on Objectives' else ''}} value="Actions on Objectives">Actions on Objectives</option>
+																<option {{ 'selected' if value=='C2' else ''}} value="C2">C2</option>
+																<option {{ 'selected' if value=='Delivery' else ''}} value="Delivery">Delivery</option>
+																<option {{ 'selected' if value=='Exploitation' else ''}} value="Exploitation">Exploitation</option>
+																<option {{ 'selected' if value=='Installation' else ''}} value="Installation">Installation</option>
+																<option {{ 'selected' if value=='Recon' else ''}} value="Recon">Recon</option>
+																<option {{ 'selected' if value=='Weaponization' else ''}} value="Weaponization">Weaponization</option>
+															</select>
+									                		</div>
+
+									                	{% endif %}
+									                	{% if key =='diamond_model' %}
+									                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/>
+									                		<select class="form-control" id="diamond_model_{{indicator['id']}}" name="diamond_model">
+																<option {{ 'selected' if value=='Unknown' else ''}} value="Unknown">Unknown</option>
+																<option {{ 'selected' if value=='Adversary' else ''}} value="Adversary">Adversary</option>
+																<option {{ 'selected' if value=='Capability' else ''}} value="Capability">Capability</option>
+																<option {{ 'selected' if value=='Infra' else ''}} value="Infra">Infra</option>
+																<option {{ 'selected' if value=='Victim' else ''}} value="Victim">Victim</option>
+															</select>
+									                		</div>
+
+									                	{% endif %}
+									                	{% if key =='indicator_type' %}
+									                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+
+									                	{% endif %}
+
+									                	{% if 'ipinfo' in key  and user_info.ipinfo_enabled  and indicator.indicator_type == 'IP'%}
+									                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+														{% endif %}
+									                	{% if 'email_' in key  and 'Email' in indicator.indicator_type  %}
+									                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+									                	{% endif %}
+									                	{% if 'whois' in key  and user_info.whois_enabled  and indicator.indicator_type == 'Domain'%}
+									                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+									                	{% endif %}
+									                	{% if 'vt' in key  and user_info.vt_enabled  and indicator.indicator_type == 'SHA256 Hash' %}
+									                		<div class="kt-section__desc" align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key  | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+														{% endif %}
+														{% if 'attack' in key  and 'MITRE' in indicator.indicator_type %}
+									                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;">{{ value }}</span></div>
+														{% endif %}
+														{% if 'vuln' in key and 'CVE' in indicator.indicator_type %}
+									                		<div class="kt-section__desc"  align="left"><span style="font-family:DM Sans;font-weight:500;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;text-transform:uppercase;">{{ key | display_names }}</span><br/><span style="font-family:DM Sans;font-weight:400;font-size:15px;color:#2E384D;word-wrap: break-word;">
+									                		{% if key=='vuln_references' and value %}
+																{% set lst=value.split(',') %}
+																{% for val in lst %}
+																				<span>{{ val | urlize(40, target='_blank')}}</span><br/>
+																{% endfor %}
+									                		{% else %}
+									                		{{ value }}
+									                		{% endif %}
+									                		</span></div>
+									                	{% endif %}
+									                {% endfor %}
+								                	</div>
+									                <div class="kt-section__desc"  style="margin-top: 10px; margin-bottom:10px; margin-left: auto; margin-right: auto;">
+									                	<div style="display:grid;  grid-template-columns: 1fr 3fr 1fr; grid-template-rows: 1fr 3fr 1fr">
+									                		<div></div>
+									                		<div style="margin:auto;"><span id="Adversary_{{indicator.id}}" class="diamond-label {{'diamond-label-selected' if indicator.diamond_model == 'Adversary' else 'diamond-label-plain' }}">Adversary</span></div>
+									                		<div></div>
+
+									                		<div style="align-self: right; justify-self: right; margin-top:auto; margin-bottom:auto; text-align: right;"><span style="text-align: right;" id="Capability_{{indicator.id}}" class="diamond-label {{'diamond-label-selected' if indicator.diamond_model == 'Capability' else 'diamond-label-plain' }}">Capability</span></div>
+									                		<div style="margin: auto;"><img id="diamond-image" style="height: 100%; width: 100%" src="/static/assets/media/logos/diamond3.png" alt="Diamond" /></div>
+									                		<div style="margin-top:auto; margin-bottom:auto; text-align: left; "><span style="text-align: left;" id="Infra_{{indicator.id}}" class="diamond-label {{'diamond-label-selected' if indicator.diamond_model == 'Infra' else 'diamond-label-plain' }}">Infra</span></div>
+
+									                		<div></div>
+									                		<div style="margin:auto;"><span id="Victim_{{indicator.id}}" class="diamond-label {{'diamond-label-selected' if indicator.diamond_model == 'Victim' else 'diamond-label-plain' }}">Victim</span></div>
+									                		<div></div>
+
+
+									                	</div>
+								                	</div>
+									                <br/>
+									            	<div class="kt-section__desc"  align="left" style="font-family:DM Sans;font-size:12px;color:#B0BAC9;letter-spacing:1.12px;">
+									                {% if indicator.get('related_reports') and indicator.get('related_reports').keys() | length > 0  %}
+									                <div style="font-weight:500;font-size:12px;color:#b0bac9;letter-spacing:1.12px;text-transform:uppercase;">IN REPORTS</div>
+										            	{% for (id, report) in indicator.get('related_reports').items() %}
+										            	<A HREF="{{url_for('view_report', report_id=id)}}"><span style="font-family:DM Sans;font-weight:400;font-size:14px;color:#2E384D;letter-spacing: normal;"><i class="flaticon2-medical-records kt-font-brand"></i>&nbsp;{{ report.friendly_id}}</span></A><br/>
+									                	{% endfor %}
+									                {% else %}
+										                <div style="font-weight:500 ;font-size:12px;color:#b0bac9;letter-spacing:1.12px;text-transform:uppercase;">NO RELATED REPORTS</div>
+									                {% endif %}
+									                </div>       
+								            </div>
+									        {% endfor %}
+
+								                </div>      
+								        	</div>
+										
+
+									</div><!--  end porlet tabs -->
+								</div><!--  col div -->
+								</div>
+								</div>
+					
+								
+								</div> <!--  end row div -->
+					</div><!-- end container div -->
+		
+
+
+
+						<!-- end:: Content -->
+{% endblock %}
+{% block footer_scripts %}
+{{ super() }}
+        <script src="static/assets/js/markjs.js" type="text/javascript"></script>
+
+
+
+<style>
+
+.fixed
+{
+    position: fixed;
+}
+    
+	pre{
+    display: block;
+    font-family: monospace;
+    white-space: pre-wrap;   
+    white-space: -moz-pre-wrap;  
+    white-space: -pre-wrap;   
+    white-space: -o-pre-wrap; 
+    word-wrap: break-word;  
+    }
+	code {
+	display: block;
+    font-family: monospace;
+    white-space: pre-wrap;   
+    white-space: -moz-pre-wrap;  
+    white-space: -pre-wrap;   
+    white-space: -o-pre-wrap; 
+    word-wrap: break-word;   
+    }
+	.marked {display: inline-block;
+  padding: 0.3em 0.6em;
+  font-size: 75%;
+  font-weight: 400;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 1rem;
+  -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  -o-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out; }
+	.diamond-label {
+	    padding: 1px;
+	    margin: 1px;
+	    font-size: 12px;
+
+	}
+	.diamond-label-plain { 
+	  	color: #777777;
+	}
+
+	.diamond-label-selected {
+		background-color: rgba(102, 88, 234, 0.1);
+  color: #6658EA;
+  		border-radius: 3px;
+		font-weight: bold;
+	
+	}
+
+	.marked-domain {
+		background-color: rgba(102, 88, 234, 0.1);
+  color: #6658EA;
+  font-weight: 300;
+		font-size: 16px;
+	}
+	.marked-ip{
+		background-color: rgba(87, 90, 123, 0.1);
+  color: #575A7B; 
+  font-weight: 300;
+		font-size: 16px;
+	}
+	
+	
+	.marked-email{
+		background-color: rgba(44, 212, 162, 0.1);
+  color: #2CD4A2; 
+  font-weight: 300;
+		font-size: 16px;
+	}
+	.marked-hash{
+		background-color: rgba(23, 162, 184, 0.1);
+  color: #17a2b8; 
+  font-weight: 300;
+		font-size: 16px;
+	}
+	.marked-attack{
+		background-color: rgba(245, 192, 112, 0.1);
+  color: #F5C070; 
+  font-weight: 300;
+		font-size: 16px;
+	}
+	.marked-url{
+		background-color: rgba(249, 101, 91, 0.1);
+  color: #F9655B;
+  font-weight: 300;
+		font-size: 16px;
+	}
+
+	.marked-cve{
+		background-color: rgba(27, 22, 66, 0.1);
+  color: #1B1642; 
+		  font-weight: 300;
+		  font-weight: 300;
+		font-size: 16px;
+	}
+
+    .div-container {
+        width: 350px;
+	text-align: center;
+    }
+    .cell {
+	vertical-align:middle;
+	display:inline-block;
+
+	padding:0px;
+	margin:0px;
+    }
+    .cell.label{
+	min-width: 60px;
+	max-width: 40px;
+    }
+    .cell.label.left{
+	text-align: right;
+    }
+    .cell.label.right{
+	text-align: left
+    }
+    #diamond-image{
+        height:200px;
+		width:200px;
+		
+	padding:0px;
+	margin:0px
+    }
+</style>
+        <script>
+        
+        $(function() {
+    		var current_indicator='';
+    		var current_section='info';
+
+        	$('#make_comment').click(function () {  
+        		
+        		if($('#new_comment').val() != '') {
+            	$.post('{{url_for('add_comment')}}',   // url
+         		       { 'comment': $('#new_comment').val(), 'csrf_token':'{{csrf_token()}}', 'obj_type':'report', 'obj_id':'{{report_info.id}}', 'user':'{{user_info.id}}' }, // data to be submit
+         		       function(data, status, jqXHR) {// success callback
+         		                if(data=='success') {
+         		                	location.reload();
+         		                } else {
+         		                	alert('An error occurred: '+data)
+         		                }
+         		                
+         		        })
+        		}
+        	});
+        	//MISP Toast
+        	$('#misp_toast').appendTo($('body'));
+            $('#misp_toast').toast({
+                delay: 7000
+            });
+
+            $('#misp_export').click(function () {  
+                $('#misp_toast').toast('show');
+                $.get("{{url_for('export_misp', report_id=report_info.id)}}");
+	    	});
+
+
+		{% for indicator in indicators %}
+			{% for i in range(0, indicator_counts.get(indicator.indicator,0)) %}
+            $('#{{indicator.indicator | escape_jquery }}{{i}}').click(function () {
+            	hideAll();
+            	current_indicator='#indicator_{{indicator.indicator | escape_jquery }}'
+				showSection(current_indicator, current_section);
+            	showDropdown('#indicator_{{indicator.indicator | escape_jquery }}','{{indicator.indicator_type}}')
+            });
+            {% endfor %}
+            $('#refresh_indicator_toast_{{indicator["id"]}}').appendTo($('body'));
+            $('#refresh_indicator_toast_{{indicator["id"]}}').toast({
+                delay: 7000
+            });
+
+            $('#refresh_indicator_{{indicator["id"]}}').click(function () {  
+                $('#refresh_indicator_toast_{{indicator["id"]}}').toast('show');
+                $.get("{{url_for('refresh_indicator', indicator_id=indicator.id, report_id=report_info.id)}}");
+	    	});
+        	$('#confidence_{{indicator["id"]}}').change(function () {
+            	$.post('{{url_for("update_indicator", report_id=report_info.id, indicator_id=indicator["id"])}}',   // url
+            			{'confidence': this.value, 'csrf_token':'{{csrf_token()}}'}, // data to be submit
+           		       function(data, status, jqXHR) {// success callback
+           		                if(data!='success') {
+           		                	alert('An error occurred: '+data)
+           		                }
+           		});
+          		
+	        });
+        	$('#kill_chain_{{indicator["id"]}}').change(function () {
+            	$.post('{{url_for("update_indicator", report_id=report_info.id, indicator_id=indicator["id"])}}',   // url
+            			{'kill_chain': this.value, 'csrf_token':'{{csrf_token()}}'}, // data to be submit
+           		       function(data, status, jqXHR) {// success callback
+           		                if(data!='success') {
+           		                	alert('An error occurred: '+data)
+           		                }
+           		});
+	        });
+        	$('#diamond_model_{{indicator["id"]}}').change(function () {
+        		switchDiamond({{indicator["id"]}},this.value);
+            	$.post('{{url_for("update_indicator", report_id=report_info.id, indicator_id=indicator["id"])}}',   // url
+            			{'diamond_model': this.value, 'csrf_token':'{{csrf_token()}}'}, // data to be submit
+           		       function(data, status, jqXHR) {// success callback
+           		                if(data!='success') {
+           		                	alert('An error occurred: '+data)
+           		                }
+           		});
+	        });
+
+        	
+       {% endfor %}
+
+        	$('#show_info').click(function () {
+	        	current_section='info';
+	        	showSection(current_indicator, current_section);
+	        });
+	        $('#show_json').click(function () {
+	        	current_section='json';
+	        	showSection(current_indicator, current_section);
+	        });
+
+	        $('#show_riskiq').click(function () {
+	        	
+	        	current_section='riskiq';
+	        	showSection(current_indicator, current_section);
+	        });
+	        $('#show_shodan').click(function () {
+	        	current_section='shodan';
+	        	showSection(current_indicator, current_section);
+	        });
+	        $('#show_misp').click(function () {
+	        	current_section='misp';
+	        	showSection(current_indicator, current_section);
+	        });
+	        $('#show_alienvault').click(function () {
+	        	current_section='alienvault';
+	        	showSection(current_indicator, current_section);
+	        });
+	        $('#show_emailrep').click(function () {
+	        	current_section='emailrep';
+	        	showSection(current_indicator, current_section);
+			});
+			$('#show_virustotal').click(function () {
+	        	current_section='vt';
+	        	showSection(current_indicator, current_section);
+			});
+			$('#show_urlscan').click(function () {
+	        	current_section='urlscan';
+	        	showSection(current_indicator, current_section);
+			});
+			$('#show_greynoise').click(function () {
+	        	current_section='greynoise';
+	        	showSection(current_indicator, current_section);
+			});
+			$('#show_hibp').click(function () {
+	        	current_section='hibp';
+	        	showSection(current_indicator, current_section);
+			});
+			$('#show_hunter').click(function () {
+	        	current_section='hunter';
+	        	showSection(current_indicator, current_section);
+			});
+        });
+		var hideAll = function() {
+        	//add new enhancers here
+        	var sections=new Array("info", "json", "emailrep", "riskiq", "shodan", "misp", "alienvault","vt","urlscan","greynoise","hibp","hunter");
+        	$('#for_indicator').text('');
+        	current_indicator=''
+        	{% for indicator in indicators %}
+	        	for ( var i = 0; i < sections.length; i++ ) {
+					elem='#indicator_{{indicator.indicator | escape_jquery }}_'+sections[i];
+					//console.log('hiding '+elem);
+					document.querySelector(elem).classList.add("hiddendiv");
+	        	}
+	        {% endfor %}
+        };
+        var switchDiamond= function(indicator, selected_val) {
+        	var models=['Infra', 'Adversary', 'Capability', 'Victim'];
+        	for(var i=0; i < models.length; i++) {
+        		elem='#'+models[i]+'_'+indicator;
+        		document.querySelector(elem).classList.add("diamond-label-plain");
+        		document.querySelector(elem).classList.remove("diamond-label-selected");
+        	}
+        	if(models.includes(selected_val)) {
+        		elem='#'+selected_val+'_'+indicator;
+        		document.querySelector(elem).classList.remove("diamond-label-plain");
+        		document.querySelector(elem).classList.add("diamond-label-selected");
+        		
+        	}
+        }
+        var showSection = function(current_indicator, enhancer_type) {
+			hideAll();
+			if (current_indicator=='') {
+				current_indicator=$('#current_indicator').text();
+			} else {
+    	    	$('#current_indicator').text(current_indicator);
+
+			}
+			
+			if (enhancer_type=='') {
+				enhancer_type=$('#enhancer_type').text();
+			} else {
+    	    	$('#enhancer_type').text(enhancer_type);
+			}
+
+			if(current_indicator != '' && enhancer_type !='') {
+				enhancer_element=current_indicator+'_'+enhancer_type;
+				//console.log('showing '+enhancer_element);
+				
+				document.querySelector('#ipinfo').classList.add("hiddendiv");
+				document.querySelector(enhancer_element).classList.remove("hiddendiv");
+			}
+        	$('#for_indicator').text('Details');
+        } ;       
+          
+        
+		var showDropdown =function (indicator, indicator_type) {
+			
+			var sources={"show_emailrep":'EmailRep',
+			'show_hibp':'HIBP',
+			'show_vt':'VirusTotal',
+			'show_riskiq':'RiskIQ',
+			'show_shodan':'Shodan',
+			'show_alienvault':'AlienVault',	
+			'show_urlscan':'urlscan.io',								                        
+			'show_greynoise':'greynoise.io',
+			'show_hunter':'hunter.io',
+			'show_misp':'MISP'}
+
+			
+			var show_ids=new Array();
+			if(indicator_type=='IP'){
+				show_ids=new Array('show_alienvault', 'show_shodan','show_riskiq','show_greynoise','show_misp');//,'show_ipinfo'
+			} else if(indicator_type=='Domain'){
+				show_ids=new Array('show_alienvault', 'show_urlscan','show_riskiq','show_misp');//,'show_whois'
+			} else if(indicator_type=='Email'){
+				show_ids=new Array('show_emailrep', 'show_misp','show_hibp','show_hunter');
+			} else if(indicator_type=='MD5 Hash' || indicator_type=='SHA256 Hash'){
+				show_ids=new Array('show_vt', 'show_misp', 'show_alienvault');
+			} else if(indicator_type=='MITRE ATT&CK Technique'){
+				
+			} else if (indicator_type=='URL') {
+				show_ids=new Array('show_misp','show_urlscan');//,'show_urlscan'
+			} else if (indicator_type=='CVE') {
+				show_ids=new Array('show_misp');//,'show_cve'
+			}
+			$('#source_menu').empty();
+			
+			$.each( show_ids, function( index, value ){
+    	    	val=value.replace('show_','');
+    	    	$('#enhancer_type').text(val);
+    	    	$('#current_indicator').text(indicator);
+				$('#source_menu').append('<div class="dropdown-item" data-toggle="tab"  onclick="showSection(\''+indicator+'\',\''+val+'\')" >'+sources[value]+'</div>')
+			});
+		};        
+
+        
+		</script>
+{% endblock %}

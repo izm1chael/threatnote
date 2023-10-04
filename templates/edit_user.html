@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block breadcrumbs %}
+				
+{% endblock %}	
+{% block app_content %}
+						<!-- begin:: Content -->
+
+						<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+
+							<!--Begin::App-->
+							<div class="kt-grid kt-grid--desktop kt-grid--ver kt-grid--ver-desktop kt-app">
+
+								<!--Begin:: App Aside-->
+								
+								{% with name=name, title=title, avatar=avatar, section='users' %}
+									{% include 'includes/settings_side.html' %}
+								{% endwith %}
+								<!--End:: App Aside-->
+
+								<!--Begin:: App Content-->
+								<div class="kt-grid__item kt-grid__item--fluid kt-app__content">
+									<div class="kt-portlet">
+									<div class="kt-portlet__head">
+									<div class="kt-portlet__head-label">
+										<h3 class="kt-portlet__head-title">
+										{{ 'Edit' if user_info.id else 'Add'}} User
+										</h3>
+									</div>
+								</div>
+
+								
+										<form class="kt-form" id="user_form" action="{{url_for('user_submit', user_id=user_info.id) }}" method="post">
+								       	{% with messages = get_flashed_messages(with_categories=true) %}
+       										 {% if messages %}
+       										 <p>
+												{% for category, message in messages %}
+													{{ message }}
+											    {% endfor %}
+											</p>
+										    {% endif %}
+									    {% endwith %}
+											<div class="kt-portlet__body">
+											<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+												<div class="form-group">
+													<label for="cpassword">Name</label>
+													<input type="text" class="form-control" name="name" id="name" value="{{user_info.name if user_info.name else ''}}"/>
+												</div>
+												<div class="form-group">
+													<label for="cpassword">Email</label>
+													<input type="text" class="form-control" name="email" id="email" value="{{user_info.email if user_info.email else ''}}"/>
+												</div>
+												<div class="form-group">
+													<label for="cpassword">Password</label>
+													<input type="password" class="form-control" name="password" id="password"/>
+												</div>
+												<div class="form-group">
+													<label for="confirm_password">Enter Password Again</label>
+													<input type="password" class="form-control" name="confirm_password" id="confirm_password"/>
+												</div>
+												<div class="form-group">
+													<label for="confidence">Role</label>
+													<select class="form-control" id="role" name="role">
+														<option value="user" {{ 'selected' if user_info.role!= 'admin' else ''}}>Standard User</option>
+														<option value="admin" {{ 'selected' if user_info.role== 'admin' else ''}}>Administrator</option>
+													</select>
+												</div>
+											</div>
+											<div class="kt-portlet__foot">
+												<div class="kt-form__actions">
+													<button type="submit" class="btn btn-primary rounded-sm">Submit</button>
+													<button type="reset" class="btn btn-outline-primary rounded-sm"><a href="{{url_for('users_list')}}">Cancel</a></button>
+												</div>
+											</div>
+									</form>										
+
+								</div>
+</div></div>
+						<!-- end:: Content -->
+{% endblock %}
+{% block footer_scripts %}
+		<script src="static/assets/js/pages/custom/profile/overview-3.js" type="text/javascript"></script>
+<script>
+$(document).ready(function(){
+	
+	$('#user_form').submit(function(event) {
+		event.preventDefault(); 
+		
+		var em=encodeURIComponent($("#email").val());
+		var jqxhr = $.getJSON('{{url_for("check_user_email")}}?user_id={{ user_info.id }}&email='+em, function(data) {
+			  console.log( "success" );
+			})
+			  .done(function(data) {
+					if(data['id'] != 'None' ) {
+						alert('Another user already exists with email:  '+$("#email").val());
+		            } else {
+		            	if($('#password').val() !=$('#confirm_password').val() ) {
+		            		alert('Passwords do not match!')
+		            	} else {
+		            		
+							$('#user_form').unbind('submit').submit();
+		            	}
+		            	
+	                }
+			  })
+			  .fail(function() {
+			    console.log( "error" );
+			  })
+	});
+	
+});
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+{% block head %}
+{{ super()}}
+<style>
+.ind_value {
+	font-family:DM Sans;
+	font-size:15px;
+	font-weight:400;
+	color:#000;
+}
+.ind_key {
+	font-family:DM Sans;
+	font-weight:500;
+	font-size:15px;
+	color:#B0BAC9;
+}
+</style>
+{% endblock %}
+{% block breadcrumbs %}
+
+{% endblock %}
+{% block app_content %}
+						<!-- begin:: Content -->
+						<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+							<div class="row">
+
+								<div class="col-xl-8">
+									<!--begin::Portlet-->
+									<div class="kt-portlet kt-portlet--mobile">
+										
+										<div class="kt-portlet__body">
+
+											<div class="kt-section">
+												<div class="kt-section__content">
+	
+													<div>
+																<div class="kt-section__desc"  align="left"><span class="ind_key">Indicator</span><br/>
+										                		<span class="ind_value" id="indicator_type">{{indicator.indicator}}</span>
+										                		</div>
+										                		<div class="kt-section__desc"  align="left"><span class="ind_key">Indicator Type</span><br/>
+										                		<span class="ind_value" id="indicator_type">{{ indicator.indicator_type}}</span>
+										                		</div>
+																{% for key, value in indicator.items() %}
+																	{% if 'ipinfo' in key  and user_info.ipinfo_enabled  and indicator.indicator_type == 'IP'%}
+												                		<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_value">{{ value }}</span></div>
+																	{% endif %}
+												                	{% if 'email_' in key  and 'Email' in indicator.indicator_type  %}
+												                		<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_value">{{ value }}</span></div>
+												                	{% endif %}
+												                	{% if 'whois' in key  and user_info.whois_enabled  and indicator.indicator_type == 'Domain'%}
+												                		<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_value">{{ value }}</span></div>
+												                	{% endif %}
+																	{% if 'attack' in key  and 'MITRE' in indicator.indicator_type %}
+												                		<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_value">{{ value }}</span></div>
+																	{% endif %}
+																	{% if 'vuln' in key and 'CVE' in indicator.indicator_type %}
+												                		<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/>
+												                		<span style="ind_value">
+												                		{% if key=='vuln_references' and value %}
+																			{% set lst=value.split(',') %}
+																			{% for val in lst %}
+																				{{ val | urlize(40, target='_blank')}}<br/>
+																			{% endfor %}
+												                		{% else %}
+												                		{{ value }}
+												                		{% endif %}
+												                		</span></div>
+																	{% endif %}
+																{% endfor %}
+													</div>
+										            {% if indicator.indicator_type in ('MD5 Hash','URL','IP','Domain','SHA256 Hash','SHA512 Hash','Email','CVE') %}
+									                    <div class="kt-portlet__head-label">
+															<span style="font-size:18px;font-weight:700">MISP</span>
+														</br>
+									                    </div>
+									                    <div>
+									                       {% if user_info.misp_enabled %}
+																{% for key, value in indicator.items() %}	
+																	{% if 'misp_' in key %}
+																		<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span style="font-family:Rubik;font-weight:400;font-size:15px;color:#2E384D;word-wrap:break-word;">{{ value }}</span></div>
+																	{% endif %}
+																{% endfor %}
+										                   {% else %}
+										                   		Your account is not MISP enabled. Enter your MISP Auth Key in settings to view this information.
+										                   {% endif %}
+									                    </div>
+										            {% endif %}
+										            {% if indicator.indicator_type in ('IP') %}
+										                    <div class="kt-portlet__head-label">
+																<span style="font-size:18px;font-weight:700">Greynoise</span>
+															</br>
+										                    </div>
+										                    <div>
+										                       {% if user_info.gn_enabled %}
+																	{% for key, value in indicator.items() %}	
+																		{% if 'gn_' in key %}
+																			<span style="word-wrap: break-word;">
+																			<div class="kt-section__desc"  align="left">
+																			<span class="ind_key">{{ key | display_names }}</span>
+																			<br/><span class="ind_val">
+																			{% if value %}
+																				{% set lst=value.split(',') %}
+																				{% for val in lst %}
+																					{{ val }}<br/>	
+																				{% endfor%}
+																			{% else %}
+																			None<br/>
+																			{% endif %}
+																			</span>
+																			</div></span>
+																		{% endif %}
+																	{% endfor %}
+											                   {% else %}
+	                   												Please add your API key and enable greynoise.io in the Integrations page.
+											                   {% endif %}
+										                </div>
+										            {% endif %}
+										            {% if indicator.indicator_type in ('URL')%}
+										                    <div class="kt-portlet__head-label">
+										                    	<span style="font-size:18px;font-weight:700">Urlscan.io</span>
+															</br>
+										                    </div>
+										                    <div>
+										                       {% if user_info.urlscan_enabled %}
+																	{% for key, value in indicator.items() %}	
+																		{% if 'urlscan' in key %}
+																			<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span style="font-family:Rubik;font-weight:400;font-size:15px;color:#2E384D;word-wrap:break-word;">{{ value }}</span></div>
+																		{% endif %}
+																	{% endfor %}
+											                   {% else %}
+																	Your account is not urlscan.io enabled. Enter a Urlscan api key and enable Urlscan.io in settings to view this information.						
+											                   {% endif %}
+										                    </div>
+										            {% endif %}
+										            {% if indicator.indicator_type in ('IP')%}
+										                    <div class="kt-portlet__head-label">
+										                    	<span style="font-size:18px;font-weight:700">Shodan</span>
+															</br>
+										                    </div>
+										                    <div>
+										                       {% if user_info.shodan_enabled %}
+																	{% for key, value in indicator.items() %}	
+																		{% if 'shodan_' in key %}
+																			<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_val">{{ value }}</span></div>
+																		{% endif %}
+																	{% endfor %}
+											                   {% else %}
+																	Your account is not Shodan enabled. Enter a Shodan key and enable Shodan in settings to view this information.						
+											                   {% endif %}
+										                    </div>
+										            {% endif %}
+										            {% if indicator.indicator_type in ('IP', 'Domain') %} 
+									                    <div class="kt-portlet__head-label">
+															<span style="font-size:18px;font-weight:700">RiskIQ</span>
+														</br>
+										                </div>
+									                    <div>
+										                       {% if user_info.riskiq_enabled %}
+																	{% for key, value in indicator.items() %}	
+																		{% if 'risk' in key or key=='gn_tags' %}
+																			<div class="kt-section__desc"  align="left">
+																			<span class="ind_key">{{ key | display_names }}</span>
+																			<br/>
+																			<span class="ind_val">
+																			{% if value %}
+																				{% set lst=value.split(',') %}
+																				{% for val in lst %}
+																					{% if  key in ('gn_tags', 'risk_tags', 'risk_sources') %}
+																						{{ val | urlize(40, target='_blank')}}<br/>
+																					{% else %}
+																						{{ val }}<br/>
+																					{% endif %}
+																				{% endfor %}
+																			{% else %}
+																				None<br/>
+																			{% endif%}
+																			</span>
+																			</div>
+																		{% endif %}
+																	{% endfor %}
+											                   {% else %}
+																	Please add your API key and enable RiskIQ in the Integrations page.
+											                   {% endif %}
+										                </div>
+										            {% endif %}
+										            {% if indicator.indicator_type in ('MD5 Hash','IP','Domain','SHA256 Hash','SHA512 Hash') %}
+										                    <div class="kt-portlet__head-label">
+																<span style="font-size:18px;font-weight:700">AlienVault OTX</span>
+															</br>
+										                    </div>
+										                    <div>
+										                       {% if user_info.av_enabled %}
+																	{% for key, value in indicator.items() %}	
+																		{% if 'av_' in key %}
+																			<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_val">{{ value }}</span></div>
+																		{% endif %}
+																	{% endfor %}
+											                   {% else %}
+																	Your account is not AlienVault enabled. Enter and EmailRep API key in settings to view this information.						
+											                   {% endif %}
+										                    </div>
+										            {% endif %}										            
+										            {% if indicator.indicator_type in ('MD5 Hash','IP','Domain','SHA256 Hash','SHA512 Hash') %}
+										                    <div class="kt-portlet__head-label">
+																<span style="font-size:18px;font-weight:700">VirusTotal</span>
+															</br>
+										                    </div>
+										                    <div>
+										                       {% if  user_info.vt_enabled %}
+																	{% for key, value in indicator.items() %}	
+																		{% if 'vt' in key %}
+																			<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_val">{{ value }}</span></div>
+																		{% endif %}
+																	{% endfor %}
+											                   {% else %}
+																	Your account is not VirusTotal enabled. Enter and EmailRep API key in settings to view this information.						
+											                   {% endif %}
+										                    </div>
+										            {% endif %}
+										            {% if indicator.indicator_type in ('Email') %}
+										                    <div class="kt-portlet__head-label" ">
+																<span style="font-size:18px;font-weight:700">HIBP</span>
+															</br>
+										                    </div>
+										                    <div>
+										                       {% if  user_info.hibp_enabled %}
+																	{% for key, value in indicator.items() %}	
+																		{% if 'hibp_' in key %}
+																			<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_val">
+																			{% if value and key=='hibp_breaches'%}		
+																				{% set lst=value.split(',') %}
+																				{% for val in lst %}
+																					{{ val }}<br/>	
+																				{% endfor%}
+																			{% else %}
+																				{{ value }}
+																			{% endif %}
+																			</span></div>
+																		{% endif %}
+																	{% endfor %}
+											                   {% else %}
+																	Your account is not HIBP enabled. Enter your HIBP API Key in settings to view this information.						
+											                   {% endif %}
+										                    </div>
+										                    <div class="kt-portlet__head-label">
+																<span style="font-size:18px;font-weight:700">EmailRep.io</span>
+															</br>
+										                    </div>
+										                    <div>
+										                       {% if  user_info.emailrep_enabled %}
+																	{% for key, value in indicator.items() %}	
+																		{% if 'email' in key  %}
+																			<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_val">{{ value }}</span></div>
+																		{% endif %}
+																	{% endfor %}
+											                   {% else %}
+																	Your account is not EmailRep enabled. Enter and EmailRep API key in settings to view this information.						
+											                   {% endif %}
+										                </div>
+									                    <div class="kt-portlet__head-label">
+															<span style="font-size:18px;font-weight:700">Hunter.io</span>
+														</br>
+									                    </div>
+									                    <div>
+									                       {% if  user_info.hunter_enabled %}
+																{% for key, value in indicator.items() %}	
+																	{% if 'hunter_' in key %}
+																		<div class="kt-section__desc"  align="left"><span class="ind_key">{{ key | display_names }}</span><br/><span class="ind_val">{{ value }}</span></div>
+																	{% endif %}
+																{% endfor %}
+										                   {% else %}
+																Your account is not VirusTotal enabled. Enter and EmailRep API key in settings to view this information.						
+										                   {% endif %}
+									                    </div>
+										            {% endif %}
+								                   
+
+
+
+
+
+
+
+
+												</div>
+												
+											</div>
+										</div>
+									</div>
+								
+									<!--end::Portlet-->
+
+									<div class="kt-portlet kt-portlet--mobile">
+										<div class="kt-portlet__head kt-portlet__head--lg">
+											<div class="kt-portlet__head-label">
+												<h3 class="kt-portlet__head-title">
+													 Comments &nbsp;</h3> 
+												</h3>
+											</div>
+											<div class="kt-portlet__head-toolbar">
+												
+											</div>
+
+
+
+										</div>
+										<div class="kt-portlet__body">
+											
+											<div class="kt-list">
+												{% for comment in comments %}
+												<div class="row kt-list__item">
+													<div class="col-lg-10">
+														<span class="kt-list__text kt-label-font-color-1"><span class="kt-label-font-color-3"><b><span style="font-size:16px;">{{comment.user}}</span></b></span> 
+														<br/>
+														<span style="font-size:16px;">{{comment.comment}}</span></span>
+													</div>
+													<div class="col-lg-2 kt-list__time"><span style="font-size:16px;">{{ comment.updated_at | time_ago}}</span>
+													</div>
+												</div>
+													{% endfor%}
+												<div class="row kt-list__item">														
+													<div class="col-lg-12"  style="padding-top: 20px; display: grid; grid-template-columns: 1fr 100px; ">
+														<div>
+															<input type="text" class="form-control" placeholder="Type here..." name="new_comment" id="new_comment"  value="" style="width: 97%">
+														</div>
+														<div style="position: absolute; right:0px; top: 20px;">
+															<input type="button" id="make_comment" value="Add Comment" class="btn btn-primary btn-sm btn-bold btn-upper rounded-sm" >
+														</div>
+													</div>
+												</div>				
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-xl-4">
+
+
+									<div class="kt-portlet">
+										<div class="kt-portlet__head">
+											<div class="kt-portlet__head-label">
+												<h3 class="kt-portlet__head-title">Related Reports</h3>
+											</div>
+										</div>
+										<div class="kt-portlet__body">
+											{% if related_reports | length > 0 %}
+
+											<table class="table table-striped- table-hover table-checkable" id="kt_table_1">
+												<thead>
+													<tr>
+														
+														<th>Report</th>
+		                                                <th>Kill Chain</th>
+		                                                <th>Diamond Model</th>
+
+													</tr>
+												</thead>
+												<tbody>
+													{% for report in related_reports %}
+													<tr>
+														
+														<td>
+														<a href="{{url_for('view_report', report_id=report.id)}}">
+														<i class="flaticon2-medical-records kt-font-info"></i> 
+														{{report.friendly_id}}</a>
+														</td>
+														
+		                                                <td><span style="font-family:Rubik;color: #000000">{{report.kill_chain if report.kill_chain else 'n/a'}}</span></td>
+														<td><span style="font-family:Rubik;color: #000000">{{report.diamond_model if report.diamond_model else 'n/a'}}</span></td>
+
+													</tr>
+													{% endfor %}
+												</tbody>
+											</table>
+											{% endif %}
+
+										</div>
+									</div>
+								</div>
+
+
+							</div>
+						</div>
+
+
+						<!-- end:: Content -->
+{% endblock %}
+{% block footer_scripts %}
+ 
+		<!-- begin:: Topbar Offcanvas Panels -->
+
+		
+		<script>
+	$(function() {
+
+		$('#make_comment').click(function () {  
+        		
+        		if($('#new_comment').val() != '') {
+            	$.post('{{url_for('add_comment')}}',   // url
+         		       { 'comment': $('#new_comment').val(), '_csrf_token':'{{csrf_token()}}','obj_type':'indicator', 'obj_id':'{{indicator.id}}', 'user':'{{user_id}}' }, // data to be submit
+         		       function(data, status, jqXHR) {// success callback
+         		                if(data=='success') {
+         		                	location.reload();
+         		                } else {
+         		                	alert('An error occurred: '+data)
+         		                }
+         		                
+         		        })
+        		}
+        	});
+	});
+</script>
+		
+{% endblock %}

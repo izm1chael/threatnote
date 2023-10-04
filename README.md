@@ -7,13 +7,12 @@ Check out the docs at https://docs.threatnote.io/ to get started!
 First you'll want to clone the threatnote.io repo
 ```
 $ git clone https://github.com/izm1chael/threatnote.git
-$ cd threatnote/threatnote
-$ add 0.0.0.0 local.docker to your /etc/hosts file
+$ cd threatnote
 $ docker-compose up
 ```
 This will launch the following:
 
-- Flask app running threatnote.io listening on port 5000 (access http://local.docker:5000 to login)
+- Flask app running threatnote.io listening on port 5000 (access http://localhost:5000 to login)
 - Redis server to manage Redis workers
 - A Redis worker named enricher to manage the enrichment jobs
 
