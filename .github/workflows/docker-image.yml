@@ -16,5 +16,4 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: |
-        cd threatnote
-        docker build . --file Dockerfile --tag izm1chael/threatnote:v1
+        docker build . --file Dockerfile --tag izm1chael/threatnote:latest
