@@ -205,7 +205,7 @@ def user_submit(user_id=None):
         user.email=email
         user.role=role
         if password:
-            user.password=generate_password_hash(password, method='sha256')
+            user.password=generate_password_hash(password, method='pbkdf2:sha256:150000')
         if(ok):
             if user_id:
                 db.session.commit()
@@ -243,7 +243,7 @@ def update_password():
     else:
         if args.get('new_password') == args.get('confirm_password'):
             password = args.get('confirm_password')
-            password=generate_password_hash(password, method='sha256')
+            password=generate_password_hash(password, method='pbkdf2:sha256:150000')
             User.query.filter_by(id=current_user.id).update({'password':password})
             db.session.commit()
             db.session.flush()
