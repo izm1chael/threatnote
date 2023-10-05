@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from werkzeug.security import check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 from models import User
@@ -12,9 +12,9 @@ auth = Blueprint('auth', __name__)
 def logout():
     try:
         logout_user()
-        app.logger.info("User logged out successfully.")
+        current_app.logger.info("User logged out successfully.")
     except Exception as e:
-        app.logger.error(f"Error logging out: {e}")
+        current_app.logger.error(f"Error logging out: {e}")
     return redirect(url_for('auth.login'))
 
 @auth.route('/login')
@@ -31,7 +31,7 @@ def login_post():
 
         if not user or not check_password_hash(user.password, password):
             flash('Please check your login details and try again.')
-            app.logger.warning(f"Login failed for user with email: {email}")
+            current_app.logger.warning(f"Login failed for user with email: {email}")
             return redirect(url_for('auth.login'))
 
         login_user(user)
@@ -39,9 +39,9 @@ def login_post():
         if user.new_user:
             return redirect(url_for('welcome'))
         else:
-            app.logger.info(f"User {user.id} logged in successfully.")
+            current_app.logger.info(f"User {user.id} logged in successfully.")
             return redirect(url_for('homepage'))
     except Exception as e:
-        app.logger.error(f"Error during login: {e}")
+        current_app.logger.error(f"Error during login: {e}")
         flash('An error occurred during login. Please try again later.')
         return redirect(url_for('auth.login'))
